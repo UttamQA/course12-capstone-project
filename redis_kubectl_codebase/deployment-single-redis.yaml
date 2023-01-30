@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: redis-cli
+  namespace: demo
+  labels:
+    name: redis-cli
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      server: redis-server
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        server: redis-server
+    spec:
+      containers:
+      - image: redis:6-alpine
+        name: redis-cli
+        ports:
+        - containerPort: 6379
+          name: rediscontainer
+        command: ["/bin/sh"]
+        args:
+          - '-c'
+          - sleep 100000
+      restartPolicy: Always
